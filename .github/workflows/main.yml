@@ -1,23 +1,27 @@
-# name: Fairy
+name: Fairy
 
-# on:
-#   schedule:
-#   - cron: '0 12 * * *' # every day at noon
+on:
+  schedule:
+    - cron: '0 0 * * *' # runs daily at midnight UTC
+  workflow_dispatch:
 
-#   # Allows you to run this workflow manually from the Actions tab
-#   workflow_dispatch:
+jobs:
+  commit:
+    runs-on: ubuntu-latest
 
-# jobs:
-#   commit:
-#     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
-#     steps:
-#       - uses: actions/checkout@v2
+      - name: Wait for random time
+        run: |
+          # Generate a random delay between 0 and 1439 minutes (0-23:59)
+          RANDOM_DELAY=$(( RANDOM % 1440 ))
+          echo "Waiting $RANDOM_DELAY minutes before committing..."
+          sleep $(( RANDOM_DELAY * 60 ))
 
-#       # Runs a single command using the runners shell
-#       - name: Run commit script
-#         run: |
-#            git config --global user.name ${ShxshvxtSxth}
-#            git config --global user.email ${{sethshashvat18@gmail.com }}
-#            git commit --allow-empty -m "Plant grass: `date +'%Y-%m-%d %H:%M:%S'`" 
-#            git push origin main
+      - name: Commit and push
+        run: |
+          git config --global user.name "ShxshvxtSxth"
+          git config --global user.email "sethshashvat18@gmail.com"
+          git commit --allow-empty -m "Plant grass: $(date +'%Y-%m-%d %H:%M:%S')"
+          git push origin main
