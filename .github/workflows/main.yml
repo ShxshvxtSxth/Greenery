@@ -12,11 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Wait for random time
+      - name: Random delay if scheduled
+        if: github.event_name == 'schedule'
         run: |
           # Generate a random delay between 0 and 1439 minutes (0-23:59)
           RANDOM_DELAY=$(( RANDOM % 1440 ))
-          echo "Waiting $RANDOM_DELAY minutes before committing..."
+          echo "Scheduled run detected. Waiting $RANDOM_DELAY minutes..."
           sleep $(( RANDOM_DELAY * 60 ))
 
       - name: Commit and push
