@@ -10,12 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: true # keeps auth for pushing
 
       - name: Random delay if scheduled
         if: github.event_name == 'schedule'
         run: |
-          # Generate a random delay between 0 and 1439 minutes (0-23:59)
           RANDOM_DELAY=$(( RANDOM % 1440 ))
           echo "Scheduled run detected. Waiting $RANDOM_DELAY minutes..."
           sleep $(( RANDOM_DELAY * 60 ))
@@ -24,5 +25,9 @@ jobs:
         run: |
           git config --global user.name "ShxshvxtSxth"
           git config --global user.email "sethshashvat18@gmail.com"
-          git commit --allow-empty -m "Plant grass: $(date +'%Y-%m-%d %H:%M:%S')"
-          git push origin main
+
+          # Make an empty commit safely
+          git commit --allow-empty -m "Plant grass: $(date +'%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
+
+          # Push changes
+          git push origin HEAD:main
